@@ -12,9 +12,9 @@ namespace haidov {
   const int TYPE_DYNAMIC = 2;
   const int CORRECT_ARGUMENT_AMOUNT = 4;
 
-  int sedlo(const int* data, size_t n, size_t m)
+  size_t sedlo(const int* data, size_t n, size_t m)
   {
-    int result = 0;
+    size_t result = 0;
     for (size_t i = 0; i < n; ++i) {
       int min = std::numeric_limits< int >::max();
       int min_id = 0;
@@ -35,9 +35,9 @@ namespace haidov {
     return result;
   }
 
-  int localMin(const int* data, size_t n, size_t m)
+  size_t localMin(const int* data, size_t n, size_t m)
   {
-    int result = 0;
+    size_t result = 0;
     for (size_t i = 1; i < n - 1; ++i) {
       for (size_t j = 0; j < m - 1; ++j) {
         if (data[i * m + j] < data[(i - 1) * m + j] && data[i * m + j] < data[i * (m + 1) + j]
