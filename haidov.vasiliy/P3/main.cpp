@@ -1,6 +1,7 @@
 #include <iostream>
-#include <fstream>
+#include <cstddef>
 #include <limits>
+#include <fstream>
 
 namespace haidov {
   const int correct_result = 0;
@@ -93,45 +94,42 @@ namespace haidov {
       output << "0 0\n0\n";
       return correct_result;
     }
+    int* data = nullptr;
     if (type == TYPE_STATIC) {
       if (n > MAX_LEN / m) {
         std::cerr << "Invalid matrix size, too big" << std::endl;
         return calculation_error;
       }
-      int fixed_sized[MAX_LEN]{};
-      for (size_t i = 0; i < n * m; ++i) {
-        if (!(input >> fixed_sized[i])) {
-          std::cerr << "Input is invalid" << std::endl;
-          return calculation_error;
-        }
-      }
-      output << localMin(fixed_sized, n, m) << "\n";
-      output << sedlo(fixed_sized, n, m) << "\n";
+      static int fixed_sized[MAX_LEN]{};
+      data = fixed_sized;
     } else if (type == TYPE_DYNAMIC) {
       if (n > std::numeric_limits< size_t >::max() / m) {
         std::cerr << "Invalid matrix size, too big" << std::endl;
         return calculation_error;
       }
-      int* data = nullptr;
       try {
         data = new int[n * m];
       } catch (...) {
         std::cerr << "Memory allocation error";
         return calculation_error;
       }
-      for (size_t i = 0; i < n * m; ++i) {
-        if (!(input >> data[i])) {
-          std::cerr << "Input is invalid" << std::endl;
-          delete[] data;
-          return calculation_error;
-        }
-      }
-      output << localMin(data, n, m) << "\n";
-      output << sedlo(data, n, m) << "\n";
-      delete[] data;
     } else {
       std::cerr << "Invalid type argument" << std::endl;
       return invalid_input;
+    }
+    for (size_t i = 0; i < n * m; ++i) {
+      if (!(input >> data[i])) {
+        std::cerr << "Input is invalid" << std::endl;
+        if (type == TYPE_DYNAMIC) {
+          delete[] data;
+        }
+        return calculation_error;
+      }
+    }
+    output << localMin(data, n, m) << "\n";
+    output << sedlo(data, n, m) << "\n";
+    if (type == TYPE_DYNAMIC) {
+      delete[] data;
     }
     return correct_result;
   }
